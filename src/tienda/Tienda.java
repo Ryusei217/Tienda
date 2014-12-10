@@ -29,7 +29,7 @@ public class Tienda {
             ResultSet datos;
             
             Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","root","124482");
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","root","pos.2012");
             consulta = conexion.prepareStatement("SELECT * FROM cliente");
             datos = consulta.executeQuery();
             while(datos.next()){
