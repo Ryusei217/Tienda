@@ -24,11 +24,57 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Vista extends javax.swing.JFrame {
 
+    private ClienteTM modelo;
+    private ArrayList<Cliente> clientes;
     /**
      * Creates new form Vista
      */
     public Vista() {
         initComponents();
+        clientes = new ArrayList<>();
+        modelo = new ClienteTM(clientes);
+        jTable1.setModel(modelo);
+        actualizarTabla();
+    }
+    
+    private void limpiarVentana(){
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("");
+    }
+    
+    private void actualizarTabla(){
+        try {
+            Connection conexion;
+            PreparedStatement consulta;
+            ResultSet datos;
+            
+            Cliente cliente;
+            clientes = new ArrayList<>();
+            
+            Class.forName("com.mysql.jdbc.Driver");
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
+            consulta = conexion.prepareStatement("SELECT * FROM cliente");
+            datos = consulta.executeQuery();
+            while(datos.next()){
+                cliente = new Cliente();
+                cliente.setIdCliente(datos.getInt("idCliente"));
+                cliente.setDpi(datos.getString("dpi"));
+                cliente.setNombre(datos.getString("nombre"));
+                clientes.add(cliente);
+            }
+            
+            modelo.setClientes(clientes);
+            jTable1.setModel(modelo);
+            jTable1.updateUI();
+            
+            consulta.close();
+            conexion.close();
+        }
+        catch(Exception e){
+            Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
+        }
     }
 
     /**
@@ -50,6 +96,7 @@ public class Vista extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -95,12 +142,24 @@ public class Vista extends javax.swing.JFrame {
 
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
-        jButton2.setText("Cargar");
+        jButton2.setText("Limpiar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
             }
         });
 
@@ -127,7 +186,8 @@ public class Vista extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(34, 34, 34))))
         );
         layout.setVerticalGroup(
@@ -143,14 +203,16 @@ public class Vista extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(7, 7, 7)
-                        .addComponent(jButton2)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEditar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(21, Short.MAX_VALUE))
@@ -172,19 +234,22 @@ public class Vista extends javax.swing.JFrame {
             PreparedStatement consulta;            
 
             Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda", "root", "pos.2012");
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
             consulta = conexion.prepareStatement("INSERT INTO cliente(idCliente,dpi,nombre) VALUES(?,?,?);");
             consulta.setInt(1, nuevo.getIdCliente());
             consulta.setString(2, nuevo.getDpi());
             consulta.setString(3, nuevo.getNombre());
             consulta.executeUpdate();
-            
             consulta.close();
             conexion.close();
             JOptionPane.showMessageDialog(this, "Cliente Agregado");
+            limpiarVentana();
         } catch (Exception e) {
-            Logger.getLogger(Tienda.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
+        }
+        finally {
+            actualizarTabla();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -202,36 +267,78 @@ public class Vista extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        limpiarVentana();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
         try {
+            int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
             Connection conexion;
             PreparedStatement consulta;
             ResultSet datos;
             
             Cliente cliente;
-            ArrayList<Cliente> clientes = new ArrayList<>();
+            clientes = new ArrayList<>();
             
             Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","root","pos.2012");
-            consulta = conexion.prepareStatement("SELECT * FROM cliente");
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
+            consulta = conexion.prepareStatement("SELECT * FROM cliente WHERE idCliente = ?");
+            consulta.setInt(1, id);
             datos = consulta.executeQuery();
-            while(datos.next()){
-                cliente = new Cliente();
+            cliente = new Cliente();
+            if(datos.next()){                
                 cliente.setIdCliente(datos.getInt("idCliente"));
                 cliente.setDpi(datos.getString("dpi"));
                 cliente.setNombre(datos.getString("nombre"));
-                clientes.add(cliente);
             }
             
-            jTable1.setModel(new ClienteTM(clientes));
+            jTextField1.setText(String.valueOf(cliente.getIdCliente()));
+            jTextField2.setText(cliente.getDpi());
+            jTextField3.setText(cliente.getNombre());
             
             consulta.close();
             conexion.close();
-        }
-        catch(Exception e){
-            Logger.getLogger(Tienda.class.getName()).log(Level.SEVERE, null, e);
+        } catch (Exception e) {
+            Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+        
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        // TODO add your handling code here:
+        try {
+            Cliente nuevo = new Cliente();
+
+            nuevo.setIdCliente(Integer.parseInt(jTextField1.getText()));
+            nuevo.setDpi(jTextField2.getText());
+            nuevo.setNombre(jTextField3.getText());
+
+            Connection conexion;
+            PreparedStatement consulta;            
+
+            Class.forName("com.mysql.jdbc.Driver");
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
+            consulta = conexion.prepareStatement("UPDATE cliente SET idCliente = ?, "
+                    + "dpi = ?, nombre = ? WHERE idCliente = ?;");
+            consulta.setInt(1, nuevo.getIdCliente());
+            consulta.setString(2, nuevo.getDpi());
+            consulta.setString(3, nuevo.getNombre());
+            consulta.setInt(4, nuevo.getIdCliente());
+            consulta.executeUpdate();
+            consulta.close();
+            conexion.close();
+            JOptionPane.showMessageDialog(this, "Cliente Actualizado");
+            limpiarVentana();
+        } catch (Exception e) {
+            Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
+        }
+        finally {
+            actualizarTabla();
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -269,6 +376,7 @@ public class Vista extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEditar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;

@@ -17,6 +17,14 @@ import javax.swing.table.AbstractTableModel;
 public class ClienteTM extends AbstractTableModel{
     private ArrayList<Cliente> clientes;
     private String[] cabecera = {"idCliente", "dpi", "nombre"};
+
+    public ArrayList<Cliente> getClientes() {
+        return clientes;
+    }
+
+    public void setClientes(ArrayList<Cliente> clientes) {
+        this.clientes = clientes;
+    }
     
     public ClienteTM(ArrayList<Cliente> clientes){
         this.clientes = clientes;
