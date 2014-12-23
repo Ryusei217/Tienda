@@ -316,20 +316,20 @@ public class Vista extends javax.swing.JFrame {
             nuevo.setDpi(jTextField2.getText());
             nuevo.setNombre(jTextField3.getText());
 
-            Connection conexion;
-            PreparedStatement consulta;
-
-            Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
-            consulta = conexion.prepareStatement("UPDATE cliente SET idCliente = ?, "
+           AyudanteConsulta.conectar();
+           AyudanteConsulta.consulta("UPDATE cliente SET idCliente = ?, "
                     + "dpi = ?, nombre = ? WHERE idCliente = ?;");
-            consulta.setInt(1, nuevo.getIdCliente());
-            consulta.setString(2, nuevo.getDpi());
-            consulta.setString(3, nuevo.getNombre());
-            consulta.setInt(4, nuevo.getIdCliente());
-            consulta.executeUpdate();
-            consulta.close();
-            conexion.close();
+           
+          AyudanteConsulta.getConsulta();
+          AyudanteConsulta.getConsulta().setInt(1,nuevo.getIdCliente());
+          AyudanteConsulta.getConsulta().setString(2,nuevo.getDpi());
+          AyudanteConsulta.getConsulta().setString(3, nuevo.getNombre());
+          AyudanteConsulta.getConsulta().setInt(4, nuevo.getIdCliente());
+          
+       
+          AyudanteConsulta.getConsulta().executeUpdate();
+          AyudanteConsulta.desconectar();
+          
             JOptionPane.showMessageDialog(this, "Cliente Actualizado");
             limpiarVentana();
         } catch (Exception e) {
@@ -346,16 +346,16 @@ public class Vista extends javax.swing.JFrame {
         try {
             //Cliente nuevo = new Cliente();
             int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
-            Connection conexion;
-            PreparedStatement consulta;            
-
-            Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
-            consulta = conexion.prepareStatement("DELETE FROM cliente  WHERE IdCliente = ?;");
-            consulta.setInt(1, id);
-            consulta.executeUpdate();
-            consulta.close();
-            conexion.close();
+            
+            AyudanteConsulta.conectar();
+            AyudanteConsulta.consulta("DELETE FROM cliente  WHERE IdCliente = ?;");
+            
+            AyudanteConsulta.getConsulta().setInt(1,id);
+           
+                    
+            AyudanteConsulta.getConsulta().executeUpdate();
+            AyudanteConsulta.desconectar();
+            
             JOptionPane.showMessageDialog(this, "Cliente Elimidado");
             limpiarVentana();
         } catch (Exception e) {
@@ -365,7 +365,6 @@ public class Vista extends javax.swing.JFrame {
         finally {
             actualizarTabla();
         }
-        
         
     }//GEN-LAST:event_jButton3ActionPerformed
 
