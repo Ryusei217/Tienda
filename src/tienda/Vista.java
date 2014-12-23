@@ -45,22 +45,18 @@ public class Vista extends javax.swing.JFrame {
     
     private void actualizarTabla(){
         try {
-            Connection conexion;
-            PreparedStatement consulta;
-            ResultSet datos;
             
             Cliente cliente;
             clientes = new ArrayList<>();
             
-            Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
-            consulta = conexion.prepareStatement("SELECT * FROM cliente");
-            datos = consulta.executeQuery();
-            while(datos.next()){
+            AyudanteConsulta.conectar();
+            AyudanteConsulta.consulta("SELECT * FROM cliente");
+            AyudanteConsulta.ejecutar();
+            while(AyudanteConsulta.getDatos().next()){
                 cliente = new Cliente();
-                cliente.setIdCliente(datos.getInt("idCliente"));
-                cliente.setDpi(datos.getString("dpi"));
-                cliente.setNombre(datos.getString("nombre"));
+                cliente.setIdCliente(AyudanteConsulta.getDatos().getInt("idCliente"));
+                cliente.setDpi(AyudanteConsulta.getDatos().getString("dpi"));
+                cliente.setNombre(AyudanteConsulta.getDatos().getString("nombre"));
                 clientes.add(cliente);
             }
             
@@ -68,8 +64,7 @@ public class Vista extends javax.swing.JFrame {
             jTable1.setModel(modelo);
             jTable1.updateUI();
             
-            consulta.close();
-            conexion.close();
+            AyudanteConsulta.desconectar();
         }
         catch(Exception e){
             Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
@@ -229,19 +224,18 @@ public class Vista extends javax.swing.JFrame {
             nuevo.setIdCliente(Integer.parseInt(jTextField1.getText()));
             nuevo.setDpi(jTextField2.getText());
             nuevo.setNombre(jTextField3.getText());
-
-            Connection conexion;
-            PreparedStatement consulta;            
-
-            Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
-            consulta = conexion.prepareStatement("INSERT INTO cliente(idCliente,dpi,nombre) VALUES(?,?,?);");
-            consulta.setInt(1, nuevo.getIdCliente());
-            consulta.setString(2, nuevo.getDpi());
-            consulta.setString(3, nuevo.getNombre());
-            consulta.executeUpdate();
-            consulta.close();
-            conexion.close();
+            
+            AyudanteConsulta.conectar();
+            
+            AyudanteConsulta.consulta("INSERT INTO cliente(idCliente,dpi,nombre) VALUES(?,?,?);");
+            
+            AyudanteConsulta.getConsulta().setInt(1, nuevo.getIdCliente());
+            AyudanteConsulta.getConsulta().setString(2, nuevo.getDpi());
+            AyudanteConsulta.getConsulta().setString(3, nuevo.getNombre());
+            AyudanteConsulta.getConsulta().executeUpdate();
+            
+            AyudanteConsulta.desconectar();
+            
             JOptionPane.showMessageDialog(this, "Cliente Agregado");
             limpiarVentana();
         } catch (Exception e) {
@@ -273,32 +267,27 @@ public class Vista extends javax.swing.JFrame {
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
         try {
-            int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
-            Connection conexion;
-            PreparedStatement consulta;
-            ResultSet datos;
-            
+            int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);            
             Cliente cliente;
             clientes = new ArrayList<>();
             
-            Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
-            consulta = conexion.prepareStatement("SELECT * FROM cliente WHERE idCliente = ?");
-            consulta.setInt(1, id);
-            datos = consulta.executeQuery();
+            AyudanteConsulta.conectar();
+            AyudanteConsulta.consulta("SELECT * FROM cliente WHERE idCliente = ?");
+            AyudanteConsulta.getConsulta().setInt(1, id);
+            AyudanteConsulta.ejecutar();
+            
             cliente = new Cliente();
-            if(datos.next()){                
-                cliente.setIdCliente(datos.getInt("idCliente"));
-                cliente.setDpi(datos.getString("dpi"));
-                cliente.setNombre(datos.getString("nombre"));
+            if(AyudanteConsulta.getDatos().next()){                
+                cliente.setIdCliente(AyudanteConsulta.getDatos().getInt("idCliente"));
+                cliente.setDpi(AyudanteConsulta.getDatos().getString("dpi"));
+                cliente.setNombre(AyudanteConsulta.getDatos().getString("nombre"));
             }
             
             jTextField1.setText(String.valueOf(cliente.getIdCliente()));
             jTextField2.setText(cliente.getDpi());
             jTextField3.setText(cliente.getNombre());
             
-            consulta.close();
-            conexion.close();
+            AyudanteConsulta.desconectar();
         } catch (Exception e) {
             Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
@@ -316,7 +305,7 @@ public class Vista extends javax.swing.JFrame {
             nuevo.setNombre(jTextField3.getText());
 
             Connection conexion;
-            PreparedStatement consulta;            
+            PreparedStatement consulta;
 
             Class.forName("com.mysql.jdbc.Driver");
             conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
