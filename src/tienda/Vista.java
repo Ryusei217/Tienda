@@ -6,6 +6,7 @@
 
 package tienda;
 
+import com.manuel.tienda.controladores.ClienteController;
 import com.manuel.tienda.modelos.Cliente;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -44,27 +45,10 @@ public class Vista extends javax.swing.JFrame {
     }
     
     private void actualizarTabla(){
-        try {
-            
-            Cliente cliente;
-            clientes = new ArrayList<>();
-            
-            AyudanteConsulta.conectar();
-            AyudanteConsulta.consulta("SELECT * FROM cliente");
-            AyudanteConsulta.ejecutar();
-            while(AyudanteConsulta.getDatos().next()){
-                cliente = new Cliente();
-                cliente.setIdCliente(AyudanteConsulta.getDatos().getInt("idCliente"));
-                cliente.setDpi(AyudanteConsulta.getDatos().getString("dpi"));
-                cliente.setNombre(AyudanteConsulta.getDatos().getString("nombre"));
-                clientes.add(cliente);
-            }
-            
-            modelo.setClientes(clientes);
+        try {                                    
+            modelo.setClientes(ClienteController.buscarClientes());
             jTable1.setModel(modelo);
             jTable1.updateUI();
-            
-            AyudanteConsulta.desconectar();
         }
         catch(Exception e){
             Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
@@ -236,17 +220,7 @@ public class Vista extends javax.swing.JFrame {
             nuevo.setIdCliente(Integer.parseInt(jTextField1.getText()));
             nuevo.setDpi(jTextField2.getText());
             nuevo.setNombre(jTextField3.getText());
-            
-            AyudanteConsulta.conectar();
-            
-            AyudanteConsulta.consulta("INSERT INTO cliente(idCliente,dpi,nombre) VALUES(?,?,?);");
-            
-            AyudanteConsulta.getConsulta().setInt(1, nuevo.getIdCliente());
-            AyudanteConsulta.getConsulta().setString(2, nuevo.getDpi());
-            AyudanteConsulta.getConsulta().setString(3, nuevo.getNombre());
-            AyudanteConsulta.getConsulta().executeUpdate();
-            
-            AyudanteConsulta.desconectar();
+            ClienteController.agregarCliente(nuevo);
             
             JOptionPane.showMessageDialog(this, "Cliente Agregado");
             limpiarVentana();
@@ -280,9 +254,10 @@ public class Vista extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);            
-            Cliente cliente;
+            Cliente cliente; //El cliente que se va a buscar
             clientes = new ArrayList<>();
             
+            //Consultamos la base de datos
             AyudanteConsulta.conectar();
             AyudanteConsulta.consulta("SELECT * FROM cliente WHERE idCliente = ?");
             AyudanteConsulta.getConsulta().setInt(1, id);

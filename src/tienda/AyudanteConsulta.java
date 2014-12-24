@@ -12,7 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * AyudanteConsulta permite trabajar con conexiones a MySQL
+ * sin necesidad de instanciar en todas partes las conexiones.
  * @author Cristian
  */
 public class AyudanteConsulta {
@@ -20,20 +21,38 @@ public class AyudanteConsulta {
     private static PreparedStatement consulta;
     private static ResultSet datos;
     
+    /**
+     * Permite abrir la conexion hacia la base de datos.
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public static void conectar() throws ClassNotFoundException, SQLException{
         Class.forName("com.mysql.jdbc.Driver");
         conexion = DriverManager.getConnection("jdbc:mysql://localhost/tienda","tienda","Tienda.2014");
     }
     
+    /**
+     * Permite cerrar la conexion hacia la base de datos.
+     * @throws SQLException 
+     */
     public static void desconectar() throws SQLException {
         consulta.close();
         conexion.close();
     }
     
+    /**
+     * Permite generar una consulta en la base de datos
+     * @param query consulta a ejecutar
+     * @throws SQLException 
+     */
     public static void consulta(String query) throws SQLException {
         consulta = conexion.prepareStatement(query);
     }
     
+    /**
+     * Ejecuta la consulta en la base de datos.
+     * @throws SQLException 
+     */
     public static void ejecutar() throws SQLException {
         datos = consulta.executeQuery();
     }
