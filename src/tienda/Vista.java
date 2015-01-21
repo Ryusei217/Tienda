@@ -8,16 +8,11 @@ package tienda;
 
 import com.manuel.tienda.controladores.ClienteController;
 import com.manuel.tienda.modelos.Cliente;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -46,7 +41,7 @@ public class Vista extends javax.swing.JFrame {
     
     private void actualizarTabla(){
         try {                                    
-            modelo.setClientes(ClienteController.buscarClientes());
+            modelo.setClientes(ClienteController.listaClientes());
             jTable1.setModel(modelo);
             jTable1.updateUI();
         }
@@ -254,30 +249,14 @@ public class Vista extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);            
-            Cliente cliente; //El cliente que se va a buscar
-            clientes = new ArrayList<>();
-            
-            //Consultamos la base de datos
-            AyudanteConsulta.conectar();
-            AyudanteConsulta.consulta("SELECT * FROM cliente WHERE idCliente = ?");
-            AyudanteConsulta.getConsulta().setInt(1, id);
-            AyudanteConsulta.ejecutar();
-            
-            cliente = new Cliente();
-            if(AyudanteConsulta.getDatos().next()){                
-                cliente.setIdCliente(AyudanteConsulta.getDatos().getInt("idCliente"));
-                cliente.setDpi(AyudanteConsulta.getDatos().getString("dpi"));
-                cliente.setNombre(AyudanteConsulta.getDatos().getString("nombre"));
-            }
-            
+            Cliente cliente = ClienteController.buscarCliente(id);
+
             jTextField1.setText(String.valueOf(cliente.getIdCliente()));
             jTextField2.setText(cliente.getDpi());
             jTextField3.setText(cliente.getNombre());
-            
-            AyudanteConsulta.desconectar();
         } catch (Exception e) {
             Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
-            JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error no se encontro al cliente en la BD.\n" + e.getMessage());
         }
         
     }//GEN-LAST:event_jTable1MouseClicked
@@ -286,30 +265,16 @@ public class Vista extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             Cliente nuevo = new Cliente();
-
             nuevo.setIdCliente(Integer.parseInt(jTextField1.getText()));
             nuevo.setDpi(jTextField2.getText());
             nuevo.setNombre(jTextField3.getText());
-
-           AyudanteConsulta.conectar();
-           AyudanteConsulta.consulta("UPDATE cliente SET idCliente = ?, "
-                    + "dpi = ?, nombre = ? WHERE idCliente = ?;");
-           
-          AyudanteConsulta.getConsulta();
-          AyudanteConsulta.getConsulta().setInt(1,nuevo.getIdCliente());
-          AyudanteConsulta.getConsulta().setString(2,nuevo.getDpi());
-          AyudanteConsulta.getConsulta().setString(3, nuevo.getNombre());
-          AyudanteConsulta.getConsulta().setInt(4, nuevo.getIdCliente());
-          
-       
-          AyudanteConsulta.getConsulta().executeUpdate();
-          AyudanteConsulta.desconectar();
-          
+            
+            ClienteController.editarCliente(nuevo);
             JOptionPane.showMessageDialog(this, "Cliente Actualizado");
             limpiarVentana();
         } catch (Exception e) {
             Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
-            JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error al actualizar la BD.\n" + e.getMessage());
         }
         finally {
             actualizarTabla();
@@ -319,18 +284,8 @@ public class Vista extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         try {
-            //Cliente nuevo = new Cliente();
             int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
-            
-            AyudanteConsulta.conectar();
-            AyudanteConsulta.consulta("DELETE FROM cliente  WHERE IdCliente = ?;");
-            
-            AyudanteConsulta.getConsulta().setInt(1,id);
-           
-                    
-            AyudanteConsulta.getConsulta().executeUpdate();
-            AyudanteConsulta.desconectar();
-            
+            ClienteController.eliminarCliente(id);
             JOptionPane.showMessageDialog(this, "Cliente Elimidado");
             limpiarVentana();
         } catch (Exception e) {
