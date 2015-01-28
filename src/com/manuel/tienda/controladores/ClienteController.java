@@ -65,7 +65,12 @@ public class ClienteController {
         AyudanteConsulta.desconectar();
         return cliente;
     }
-
+/**
+ * metodo que agrega un cliente en la BD
+ * @param cliente cliente que se agrega
+ * @throws ClassNotFoundException
+ * @throws SQLException 
+ */
     public static void agregarCliente(Cliente cliente) throws ClassNotFoundException, SQLException {
         AyudanteConsulta.conectar();
         AyudanteConsulta.consulta("INSERT INTO cliente(idCliente,dpi,nombre) VALUES(?,?,?);");
@@ -75,6 +80,13 @@ public class ClienteController {
         AyudanteConsulta.getConsulta().executeUpdate();
         AyudanteConsulta.desconectar();
     }
+    
+    /**
+     * Edita un cliente que existe en la BD
+     * @param cliente cliente que se edita
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
 
     public static void editarCliente(Cliente cliente) throws ClassNotFoundException, SQLException {
         AyudanteConsulta.conectar();
@@ -91,6 +103,12 @@ public class ClienteController {
         AyudanteConsulta.desconectar();
     }
     
+    /**
+     * Elimina cliente en la BD
+     * @param id codigo del cliente encontrado para eliminarlo
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public static void eliminarCliente(int id) throws ClassNotFoundException, SQLException {
         AyudanteConsulta.conectar();
         AyudanteConsulta.consulta("DELETE FROM cliente  WHERE IdCliente = ?;");

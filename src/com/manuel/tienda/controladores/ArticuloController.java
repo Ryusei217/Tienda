@@ -18,6 +18,24 @@ public class ArticuloController {
 
     private static ArrayList<Articulo> articulo;
     private static Articulo producto;
+    
+    public static  ArrayList<Articulo> listaArticulos() throws ClassNotFoundException, SQLException {
+    articulo = new ArrayList<>();
+     AyudanteConsulta.conectar();
+        AyudanteConsulta.consulta("SELECT * FROM cliente");
+        AyudanteConsulta.ejecutar();
+        while (AyudanteConsulta.getDatos().next()) {
+            producto = new Articulo();
+            producto.setIdArticulo(AyudanteConsulta.getDatos().getInt("idArticulo"));
+            producto.setNumSerie(AyudanteConsulta.getDatos().getString("numserie"));
+            producto.setNombre(AyudanteConsulta.getDatos().getString("nombre"));
+            producto.setPrecio(AyudanteConsulta.getDatos().getBigDecimal("precio"));
+            articulo.add(producto);
+        }
+
+        AyudanteConsulta.desconectar();
+        return articulo;    
+    }
 
     public static ArrayList<Articulo> buscarArticulos() throws ClassNotFoundException, SQLException {
         articulo = new ArrayList<>();
@@ -38,6 +56,11 @@ public class ArticuloController {
 
     }
     
+    /**
+     * Agrega articulos en la BD
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public static void agregarArticulos() throws ClassNotFoundException, SQLException{
         
         AyudanteConsulta.conectar();
@@ -50,5 +73,38 @@ public class ArticuloController {
         AyudanteConsulta.getConsulta().executeUpdate();
         AyudanteConsulta.desconectar();
     }
+    
+    /**
+     * Edita Articulos en la BD
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
+    public static  void editarArticulos() throws ClassNotFoundException, SQLException{
+         AyudanteConsulta.conectar();
+        AyudanteConsulta.consulta("UPDATE cliente SET idCliente = ?, "
+                + "dpi = ?, nombre = ? WHERE idCliente = ?;");
 
+        AyudanteConsulta.getConsulta();
+        AyudanteConsulta.getConsulta().setInt(1, producto.getIdArticulo());
+        AyudanteConsulta.getConsulta().setString(2, producto.getNumSerie());
+        AyudanteConsulta.getConsulta().setString(3, producto.getNombre());
+        AyudanteConsulta.getConsulta().setBigDecimal(4, producto.getPrecio());
+        
+        AyudanteConsulta.getConsulta().executeUpdate();
+        AyudanteConsulta.desconectar();
+    }
+
+   /**
+    * Elimina articulo en la BD
+    * @param id codigo del Articulo
+    * @throws ClassNotFoundException
+    * @throws SQLException 
+    */ 
+    public static void eliminarArticulo(int id) throws ClassNotFoundException, SQLException{
+        AyudanteConsulta.conectar();
+        AyudanteConsulta.consulta("DELETE FROM cliente  WHERE IdArticulo = ?;");
+        AyudanteConsulta.getConsulta().setInt(1, id);
+        AyudanteConsulta.getConsulta().executeUpdate();
+        AyudanteConsulta.desconectar();
+    }
 }
