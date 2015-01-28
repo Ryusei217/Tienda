@@ -5,6 +5,8 @@
  */
 package tienda;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author Cristian
@@ -29,11 +31,22 @@ public class Main extends javax.swing.JFrame {
 
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        menuClientes = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jMenu1.setText("File");
+        jMenu1.setText("Archivo");
+
+        menuClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tienda/user.png"))); // NOI18N
+        menuClientes.setText("Clientes");
+        menuClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuClientesActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuClientes);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
@@ -55,6 +68,12 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void menuClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuClientesActionPerformed
+        // TODO add your handling code here:
+        Vista cliente = new Vista();
+        cliente.setVisible(true);
+    }//GEN-LAST:event_menuClientesActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -71,21 +90,19 @@ public class Main extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
+                final Main main = new Main();
+                main.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                main.setVisible(true);
             }
         });
     }
@@ -94,5 +111,6 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem menuClientes;
     // End of variables declaration//GEN-END:variables
 }

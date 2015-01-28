@@ -18,7 +18,7 @@ public class ArticuloTM extends AbstractTableModel {
     private ArrayList<Articulo> producto;
     private String[] Cabecera = {"idArticulo", "numSerie","nombre","precio"};
     
-      public ArrayList<Articulo> getArticulo() {
+    public ArrayList<Articulo> getArticulo() {
         return producto;
     }
     
@@ -38,6 +38,11 @@ public class ArticuloTM extends AbstractTableModel {
     @Override
     public int getColumnCount() {
         return Cabecera.length;
+    }
+    
+   @Override
+    public String getColumnName(int column){
+        return Cabecera[column];
     }
     
     @Override

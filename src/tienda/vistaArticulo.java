@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package tienda;
 
 import com.manuel.tienda.controladores.ArticuloController;
@@ -19,30 +18,28 @@ import javax.swing.JOptionPane;
  * @author Escobar
  */
 public class vistaArticulo extends javax.swing.JFrame {
-    private String VistaArticulo;
+
     private ArticuloTM modelo;
-     private ArrayList<Articulo> articulo;
+    private ArrayList<Articulo> articulo;
 
     /**
      * Creates new form vistaArticulo
      */
     public vistaArticulo() {
         initComponents();
+        articulo = new ArrayList<Articulo>();
         modelo = new ArticuloTM(articulo);
         jTable1.setModel(modelo);
         actualizarTabla();
-        
+
     }
-    
-    private void actualizarTabla(){
-        try{
+
+    private void actualizarTabla() {
+        try {
             modelo.setArticulo(ArticuloController.listaArticulos());
             jTable1.setModel(modelo);
             jTable1.updateUI();
-        
-            
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Logger.getLogger(vistaArticulo.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
         }
@@ -114,13 +111,13 @@ public class vistaArticulo extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {},
+                {},
+                {},
+                {}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -217,19 +214,24 @@ public class vistaArticulo extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         try {
-        Articulo articulo= new Articulo();
-        
-        articulo.setIdArticulo(Integer.parseInt (jTextField1.getText()));
-        articulo.setNumSerie(jTextField2.getText());
-        articulo.setNombre(jTextField3.getText());
-        articulo.setPrecio (new BigDecimal  (jTextField4.getText()));
-        
-    }
-       catch (Exception e){
-         Logger.getLogger(vistaArticulo.class.getName()).log(Level.SEVERE, null, e);
-         JOptionPane.showMessageDialog(this, "Ocurrio un Error a ls hora de crear articulos a la BD.\n" + e.getMessage());
-        
-    }
+            Articulo articulo = new Articulo();
+
+            articulo.setIdArticulo(Integer.parseInt(jTextField1.getText()));
+            articulo.setNumSerie(jTextField2.getText());
+            articulo.setNombre(jTextField3.getText());
+            articulo.setPrecio(new BigDecimal(jTextField4.getText()));
+            
+            ArticuloController.agregarArticulos(articulo);
+            JOptionPane.showMessageDialog(this, "Articulo Agregado");
+
+        } catch (Exception e) {
+            Logger.getLogger(vistaArticulo.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error a ls hora de crear articulos a la BD.\n" + e.getMessage());
+
+        }
+        finally {
+            actualizarTabla();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
