@@ -5,6 +5,7 @@
  */
 package tienda;
 
+import com.manuel.tienda.modelos.Articulo;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -79,6 +80,10 @@ public class AyudanteConsulta {
 
     public static void setConexion(Connection conexion) {
         AyudanteConsulta.conexion = conexion;
+    }
+
+    static void editarArticulos(Articulo articulo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

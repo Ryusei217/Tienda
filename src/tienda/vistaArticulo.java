@@ -39,11 +39,19 @@ public class vistaArticulo extends javax.swing.JFrame {
             modelo.setArticulo(ArticuloController.listaArticulos());
             jTable1.setModel(modelo);
             jTable1.updateUI();
+            
         } catch (Exception e) {
             Logger.getLogger(vistaArticulo.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
         }
     }
+    
+    private void limpiarVentana(){
+        jTextField1.setText(" ");
+        jTextField2.setText(" ");
+        jTextField3.setText(" ");
+        jTextField4.setText(" ");
+    } 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -120,6 +128,11 @@ public class vistaArticulo extends javax.swing.JFrame {
 
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jButton2.setText("Editar");
@@ -223,6 +236,7 @@ public class vistaArticulo extends javax.swing.JFrame {
             
             ArticuloController.agregarArticulos(articulo);
             JOptionPane.showMessageDialog(this, "Articulo Agregado");
+            limpiarVentana();
 
         } catch (Exception e) {
             Logger.getLogger(vistaArticulo.class.getName()).log(Level.SEVERE, null, e);
@@ -236,11 +250,62 @@ public class vistaArticulo extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        try{
+            Articulo articulo = new Articulo();
+            articulo.setIdArticulo(Integer.parseInt(jTextField1.getText()));
+            articulo.setNumSerie(jTextField2.getText());
+            articulo.setNombre(jTextField3.getText());
+            articulo.setPrecio(new BigDecimal(jTextField4.getText()));
+            
+            ArticuloController.editarArticulos(articulo);
+            JOptionPane.showMessageDialog(this, "Articulo Actualizado");
+            limpiarVentana();
+        }
+        catch(Exception e){
+            Logger.getLogger(vistaArticulo.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error a la hora de editar articulos a la BD.\n" + e.getMessage());
+        }
+        finally {
+            actualizarTabla();
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        try {
+            int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
+            ArticuloController.eliminarArticulo(id);
+            JOptionPane.showMessageDialog(this, "Articulo Elimidado");
+            limpiarVentana();
+        }
+        catch (Exception e){
+            Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + e.getMessage());
+        }
+        finally {
+            actualizarTabla();
+        }
+        
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        try {
+              int id = (int)jTable1.getValueAt(jTable1.getSelectedRow(), 0);            
+            Articulo articulo = ArticuloController.buscarArticulos(id);
+            
+            jTextField1.setText(String.valueOf(articulo.getIdArticulo()));
+            jTextField2.setText(String.valueOf(articulo.getNumSerie()));
+            jTextField3.setText(articulo.getNombre());
+            jTextField4.setText(articulo.getPrecio().toString());
+            
+        }
+        catch(Exception e){
+            Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error no se encontro el articulo en la BD.\n" + e.getMessage());
+            
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments

@@ -37,23 +37,21 @@ public class ArticuloController {
         return articulo;
     }
 
-    public static ArrayList<Articulo> buscarArticulos() throws ClassNotFoundException, SQLException {
-        articulo = new ArrayList<>();
+    public static Articulo buscarArticulos(int id) throws ClassNotFoundException, SQLException {
         AyudanteConsulta.conectar();
-        AyudanteConsulta.consulta("SELECT * FROM articulo");
+        AyudanteConsulta.consulta("SELECT * FROM articulo WHERE idArticulo = ?");
+        AyudanteConsulta.getConsulta().setInt(1, id);
         AyudanteConsulta.ejecutar();
-        while (AyudanteConsulta.getDatos().next()) {
+        
             producto = new Articulo();
+            if (AyudanteConsulta.getDatos().next()){
             producto.setIdArticulo(AyudanteConsulta.getDatos().getInt("idArticulo"));
-            producto.setNumSerie(AyudanteConsulta.getDatos().getString("numSerie"));
+            producto.setNumSerie(AyudanteConsulta.getDatos().getString("numeroSerie"));
             producto.setNombre(AyudanteConsulta.getDatos().getString("nombre"));
             producto.setPrecio(AyudanteConsulta.getDatos().getBigDecimal("precio"));
-            articulo.add(producto);
         }
-
         AyudanteConsulta.desconectar();
-        return articulo;
-
+        return producto;
     }
 
     /**
@@ -81,7 +79,7 @@ public class ArticuloController {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public static void editarArticulos() throws ClassNotFoundException, SQLException {
+    public static void editarArticulos(Articulo producto) throws ClassNotFoundException, SQLException {
         AyudanteConsulta.conectar();
         AyudanteConsulta.consulta("UPDATE articulo SET idArticulo = ?, "
                 + "numeroSerie = ?, nombre = ?, precio = ? WHERE idArticulo = ?;");
@@ -91,6 +89,7 @@ public class ArticuloController {
         AyudanteConsulta.getConsulta().setString(2, producto.getNumSerie());
         AyudanteConsulta.getConsulta().setString(3, producto.getNombre());
         AyudanteConsulta.getConsulta().setBigDecimal(4, producto.getPrecio());
+        AyudanteConsulta.getConsulta().setInt(5, producto.getIdArticulo());
 
         AyudanteConsulta.getConsulta().executeUpdate();
         AyudanteConsulta.desconectar();
