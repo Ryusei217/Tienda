@@ -32,7 +32,11 @@ public class Main extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuClientes = new javax.swing.JMenuItem();
+        menuArticulos = new javax.swing.JMenuItem();
+        menuSalir = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
+        menuListaPedidos = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -47,10 +51,40 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu1.add(menuClientes);
 
+        menuArticulos.setIcon(new javax.swing.ImageIcon("C:\\Users\\Cristian\\Downloads\\fatcow-hosting-icons-3.9.2-all\\FatCow_Icons16x16\\box.png")); // NOI18N
+        menuArticulos.setText("Articulo");
+        menuArticulos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuArticulosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuArticulos);
+
+        menuSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tienda/door_out.png"))); // NOI18N
+        menuSalir.setText("Salir");
+        menuSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSalirActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuSalir);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
         jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Pedidos");
+
+        menuListaPedidos.setText("Lista de Pedidos");
+        menuListaPedidos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListaPedidosActionPerformed(evt);
+            }
+        });
+        jMenu3.add(menuListaPedidos);
+
+        jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
 
@@ -73,6 +107,24 @@ public class Main extends javax.swing.JFrame {
         Vista cliente = new Vista();
         cliente.setVisible(true);
     }//GEN-LAST:event_menuClientesActionPerformed
+
+    private void menuSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSalirActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+        this.dispose();
+    }//GEN-LAST:event_menuSalirActionPerformed
+
+    private void menuArticulosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuArticulosActionPerformed
+        // TODO add your handling code here:
+        vistaArticulo articulo = new vistaArticulo();
+        articulo.setVisible(true);
+    }//GEN-LAST:event_menuArticulosActionPerformed
+
+    private void menuListaPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListaPedidosActionPerformed
+        // TODO add your handling code here:
+        Pedidos pedidos = new Pedidos();
+        pedidos.setVisible(true);
+    }//GEN-LAST:event_menuListaPedidosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -110,7 +162,11 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem menuArticulos;
     private javax.swing.JMenuItem menuClientes;
+    private javax.swing.JMenuItem menuListaPedidos;
+    private javax.swing.JMenuItem menuSalir;
     // End of variables declaration//GEN-END:variables
 }
