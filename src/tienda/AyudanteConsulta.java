@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * AyudanteConsulta permite trabajar con conexiones a MySQL
@@ -50,6 +51,10 @@ public class AyudanteConsulta {
         consulta = conexion.prepareStatement(query);
     }
     
+    public static void consultaConLlave(String query) throws SQLException{
+        consulta = conexion.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+    }
+    
     /**
      * Ejecuta la consulta en la base de datos.
      * @throws SQLException 
@@ -82,8 +87,20 @@ public class AyudanteConsulta {
         AyudanteConsulta.conexion = conexion;
     }
 
-    static void editarArticulos(Articulo articulo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * Evalua el arreglo devuelto por un PreparedStatement en busca de operaciones
+     * que hayan fallado a la hora de ingresarse a la BD
+     * @param val arreglo de enteros con el resultado.
+     * @return true si no hay errores de ejecucion.
+     */
+    public static boolean checkBatch(int[] val){
+        boolean centinela = true;
+        for (int i : val) {
+            if(val[i] == PreparedStatement.EXECUTE_FAILED){
+                centinela = false;
+            }
+        }
+        return centinela;
     }
     
 }
