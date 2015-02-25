@@ -6,6 +6,7 @@
 
 package tienda;
 
+import com.manuel.tienda.abstractos.ClienteTM;
 import com.manuel.tienda.controladores.ClienteController;
 import com.manuel.tienda.modelos.Cliente;
 import java.sql.SQLException;

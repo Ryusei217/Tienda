@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tienda;
 
-import com.manuel.tienda.modelos.Pedido;
+package com.manuel.tienda.abstractos;
+
+import com.manuel.tienda.modelos.Cliente;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -13,25 +14,25 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Cristian
  */
-public class PedidoTM extends AbstractTableModel {
-private ArrayList<Pedido> pedidos;
-    private String[] cabecera = {"idPedido", "fecha", "idCliente"};
+public class ClienteTM extends AbstractTableModel{
+    private ArrayList<Cliente> clientes;
+    private String[] cabecera = {"idCliente", "dpi", "nombre"};
 
-    public ArrayList<Pedido> getPedidos() {
-        return pedidos;
+    public ArrayList<Cliente> getClientes() {
+        return clientes;
     }
 
-    public void setPedidos(ArrayList<Pedido> pedidos) {
-        this.pedidos = pedidos;
+    public void setClientes(ArrayList<Cliente> clientes) {
+        this.clientes = clientes;
     }
     
-    public PedidoTM(ArrayList<Pedido> pedidos){
-        this.pedidos = pedidos;
+    public ClienteTM(ArrayList<Cliente> clientes){
+        this.clientes = clientes;
     }
 
     @Override
     public int getRowCount() {
-        return pedidos.size();
+        return clientes.size();
     }
 
     @Override
@@ -46,11 +47,11 @@ private ArrayList<Pedido> pedidos;
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Pedido pedido = pedidos.get(rowIndex);
+        Cliente cliente = clientes.get(rowIndex);
         switch(columnIndex){
-            case 0 : return pedido.getIdPedido();
-            case 1 : return pedido.getFecha();
-            case 2 : return pedido.getIdCliente();
+            case 0 : return cliente.getIdCliente();
+            case 1 : return cliente.getDpi();
+            case 2 : return cliente.getNombre();
             default: return null;
         }
     }

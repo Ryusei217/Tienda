@@ -5,6 +5,7 @@
  */
 package tienda;
 
+import com.manuel.tienda.abstractos.ArticuloTM;
 import com.manuel.tienda.controladores.ArticuloController;
 import com.manuel.tienda.modelos.Articulo;
 import java.math.BigDecimal;

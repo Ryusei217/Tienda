@@ -5,6 +5,8 @@
  */
 package com.manuel.tienda.modelos;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Cristian
@@ -13,14 +15,16 @@ public class DetallePedido {
     private int idArticulo;
     private int idPedido;
     private int cantidad;
+    private BigDecimal precio; 
 
     public DetallePedido() {
     }
 
-    public DetallePedido(int idArticulo, int idPedido, int cantidad) {
+    public DetallePedido(int idArticulo, int idPedido, int cantidad, BigDecimal precio) {
         this.idArticulo = idArticulo;
         this.idPedido = idPedido;
         this.cantidad = cantidad;
+        this.precio = precio;
     }
     
     public int getIdArticulo() {
@@ -47,6 +51,14 @@ public class DetallePedido {
         this.cantidad = cantidad;
     }
 
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+    
     @Override
     public String toString() {
         return "DetallePedido{" + "idArticulo=" + idArticulo + ", idPedido=" + idPedido + ", cantidad=" + cantidad + '}';

@@ -3,10 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tienda;
+package com.manuel.tienda.abstractos;
 
+import com.manuel.tienda.controladores.ArticuloController;
 import com.manuel.tienda.modelos.DetallePedido;
+import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -16,7 +21,7 @@ import javax.swing.table.AbstractTableModel;
 public class DetalleTM extends AbstractTableModel {
 
     private ArrayList<DetallePedido> detalles;
-    private String[] cabecera = {"Articulo", "Pedido", "Cantidad"};
+    private String[] cabecera = {"Articulo", "nombre", "Cantidad", "Precio", "Total"};
 
     public ArrayList<DetallePedido> getDetallePedidos() {
         return detalles;
@@ -50,8 +55,16 @@ public class DetalleTM extends AbstractTableModel {
         DetallePedido detalle = detalles.get(rowIndex);
         switch(columnIndex){
             case 0 : return detalle.getIdArticulo();
-            case 1 : return detalle.getIdPedido();
+            case 1 : {
+                try {
+                    return ArticuloController.buscarArticulos(detalle.getIdArticulo()).getNombre();
+                } catch (ClassNotFoundException | SQLException ex) {
+                    Logger.getLogger(DetalleTM.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             case 2 : return detalle.getCantidad();
+            case 3 : return detalle.getPrecio();
+            case 4 : return detalle.getPrecio().multiply(new BigDecimal(detalle.getCantidad()));
             default: return null;
         }
     }

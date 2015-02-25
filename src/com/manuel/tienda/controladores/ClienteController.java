@@ -65,6 +65,31 @@ public class ClienteController {
         AyudanteConsulta.desconectar();
         return cliente;
     }
+    
+    /**
+     * Busca un Cliente dentro de la BD
+     * @param dpi el dpi del cliente
+     * @return Cliente
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
+    public static Cliente buscarCliente(String dpi) throws ClassNotFoundException, SQLException {
+        AyudanteConsulta.conectar();
+        AyudanteConsulta.consulta("SELECT * FROM cliente WHERE dpi = ?");
+        AyudanteConsulta.getConsulta().setString(1, dpi);
+        AyudanteConsulta.ejecutar();
+
+        cliente = new Cliente();
+        if (AyudanteConsulta.getDatos().next()) {
+            cliente.setIdCliente(AyudanteConsulta.getDatos().getInt("idCliente"));
+            cliente.setDpi(AyudanteConsulta.getDatos().getString("dpi"));
+            cliente.setNombre(AyudanteConsulta.getDatos().getString("nombre"));
+        }
+        
+        AyudanteConsulta.desconectar();
+        return cliente;
+    }
+    
 /**
  * metodo que agrega un cliente en la BD
  * @param cliente cliente que se agrega

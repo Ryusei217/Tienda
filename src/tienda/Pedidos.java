@@ -5,6 +5,7 @@
  */
 package tienda;
 
+import com.manuel.tienda.abstractos.PedidoTM;
 import com.manuel.tienda.controladores.PedidoController;
 import com.manuel.tienda.modelos.Cliente;
 import com.manuel.tienda.modelos.Pedido;

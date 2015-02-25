@@ -5,9 +5,17 @@
  */
 package tienda;
 
+import com.manuel.tienda.abstractos.ArticuloLM;
+import com.manuel.tienda.abstractos.DetalleTM;
+import com.manuel.tienda.controladores.ArticuloController;
+import com.manuel.tienda.controladores.ClienteController;
 import com.manuel.tienda.controladores.PedidoController;
+import com.manuel.tienda.modelos.Articulo;
+import com.manuel.tienda.modelos.Cliente;
 import com.manuel.tienda.modelos.DetallePedido;
 import com.manuel.tienda.modelos.Pedido;
+import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +33,7 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
 
     private ArrayList<DetallePedido> detalles;
     private DetalleTM modelo;
+    private Cliente cliente;
     
     /**
      * Creates new form FrmNuevoPedido
@@ -33,10 +42,16 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
      */
     public FrmNuevoPedido(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        initComponents();
-        detalles = new ArrayList<>();
-        modelo = new DetalleTM(detalles);
-        actualizarTabla();
+        try {
+            initComponents();
+            detalles = new ArrayList<>();
+            modelo = new DetalleTM(detalles);
+            cliente = new Cliente();
+            cmbArticulo.setModel(new ArticuloLM(ArticuloController.listaArticulos()));
+            actualizarTabla();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(FrmNuevoPedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void actualizarTabla(){
@@ -46,7 +61,7 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
     }
     
     private void limpiarDetalle(){
-        txtArticulo.setText("");
+        //txtArticulo.setText("");
         txtCantidad.setText("");        
     }
     
@@ -75,11 +90,17 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
         tablaDetalle = new javax.swing.JTable();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        txtArticulo = new javax.swing.JTextField();
         lblArticulo = new javax.swing.JLabel();
         lblCantidad = new javax.swing.JLabel();
         txtCantidad = new javax.swing.JTextField();
         btnAgregar = new javax.swing.JButton();
+        cmbArticulo = new javax.swing.JComboBox();
+        txtDpi = new javax.swing.JTextField();
+        lblDpi = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        txtPrecio = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -88,6 +109,8 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
         lblFecha.setText("Fecha");
 
         lblCliente.setText("Cliente");
+
+        txtCliente.setEditable(false);
 
         tablaDetalle.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -120,12 +143,41 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
 
         lblCantidad.setText("Cantidad");
 
+        txtCantidad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCantidadKeyReleased(evt);
+            }
+        });
+
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAgregarActionPerformed(evt);
             }
         });
+
+        cmbArticulo.setEditable(true);
+        cmbArticulo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbArticuloActionPerformed(evt);
+            }
+        });
+
+        txtDpi.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtDpiKeyPressed(evt);
+            }
+        });
+
+        lblDpi.setText("DPI");
+
+        jLabel1.setText("Precio");
+
+        txtPrecio.setEditable(false);
+
+        jLabel2.setText("Total");
+
+        txtTotal.setEditable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -137,33 +189,46 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(jScrollPane1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblCliente)
-                            .addComponent(lblFecha)
-                            .addComponent(lblId))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtId)
-                            .addComponent(txtFecha)
-                            .addComponent(txtCliente)))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(btnGuardar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblCliente)
+                            .addComponent(lblFecha)
+                            .addComponent(lblId)
+                            .addComponent(lblDpi))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtId)
+                            .addComponent(txtFecha)
+                            .addComponent(txtCliente)
+                            .addComponent(txtDpi)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(lblArticulo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbArticulo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtArticulo, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(lblCantidad)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnAgregar)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -176,18 +241,30 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblFecha)
                     .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDpi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblDpi))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCliente))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblCliente)
-                    .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtArticulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblArticulo)
+                    .addComponent(cmbArticulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblCantidad)
                     .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAgregar))
-                .addGap(24, 24, 24)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -207,8 +284,10 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         // TODO add your handling code here:
         DetallePedido nuevo = new DetallePedido();
-        nuevo.setIdArticulo(Integer.parseInt(txtArticulo.getText()));
+        Articulo articulo = (Articulo)cmbArticulo.getSelectedItem();
+        nuevo.setIdArticulo(articulo.getIdArticulo());
         nuevo.setCantidad(Integer.parseInt(txtCantidad.getText()));
+        nuevo.setPrecio(articulo.getPrecio());
         detalles.add(nuevo);
         actualizarTabla();
         limpiarDetalle();
@@ -221,7 +300,7 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
             Pedido nuevo = new Pedido();
             nuevo.setIdPedido(0);
             nuevo.setFecha(formateador.parse(txtFecha.getText()));
-            nuevo.setIdCliente(Integer.parseInt(txtCliente.getText()));
+            nuevo.setIdCliente(cliente.getIdCliente());
             
             PedidoController.agregarPedido(nuevo, detalles);
             JOptionPane.showMessageDialog(this, "Pedido Agregado");
@@ -233,6 +312,36 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Ocurrio un Error al ingresar a la BD.\n" + ex.getMessage());
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void txtDpiKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDpiKeyPressed
+        // TODO add your handling code here:
+        try {
+            if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+                cliente = ClienteController.buscarCliente(txtDpi.getText());
+                if(cliente.getDpi() == null){
+                    JOptionPane.showMessageDialog(this, "No se encontro al cliente con el dpi indicado");
+                }
+                txtCliente.setText(cliente.getNombre());
+            }
+        } catch (Exception e) {
+            Logger.getLogger(Vista.class.getName()).log(Level.SEVERE, null, e);
+            JOptionPane.showMessageDialog(this, "Ocurrio un Error" + e.getMessage());
+        }        
+    }//GEN-LAST:event_txtDpiKeyPressed
+
+    private void cmbArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbArticuloActionPerformed
+        // TODO add your handling code here:
+        Articulo articulo = (Articulo)cmbArticulo.getSelectedItem();
+        txtPrecio.setText(articulo.getPrecio().toString());
+    }//GEN-LAST:event_cmbArticuloActionPerformed
+
+    private void txtCantidadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadKeyReleased
+        // TODO add your handling code here:
+        Articulo articulo = (Articulo)cmbArticulo.getSelectedItem();
+        int cantidad = Integer.parseInt(txtCantidad.getText());
+        BigDecimal total = articulo.getPrecio().multiply(new BigDecimal(cantidad));
+        txtTotal.setText(total.toString());
+    }//GEN-LAST:event_txtCantidadKeyReleased
 
     /**
      * @param args the command line arguments
@@ -280,17 +389,23 @@ public class FrmNuevoPedido extends javax.swing.JDialog {
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JComboBox cmbArticulo;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblArticulo;
     private javax.swing.JLabel lblCantidad;
     private javax.swing.JLabel lblCliente;
+    private javax.swing.JLabel lblDpi;
     private javax.swing.JLabel lblFecha;
     private javax.swing.JLabel lblId;
     private javax.swing.JTable tablaDetalle;
-    private javax.swing.JTextField txtArticulo;
     private javax.swing.JTextField txtCantidad;
     private javax.swing.JTextField txtCliente;
+    private javax.swing.JTextField txtDpi;
     private javax.swing.JTextField txtFecha;
     private javax.swing.JTextField txtId;
+    private javax.swing.JTextField txtPrecio;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }
